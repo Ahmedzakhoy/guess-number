@@ -59,7 +59,6 @@ function setLevelFunction(
   document.querySelector("body").style.backgroundColor = "";
   document.querySelector(".guess").value = "";
   displayMessage(".number", "?");
-  document.querySelector(".number").style.width = "";
   store ? storeData() : "";
 }
 
@@ -107,7 +106,6 @@ check.addEventListener("click", function () {
   } else if (input === correctNumber) {
     displayMessage(".message", "🎉 great job");
     document.querySelector("body").style.backgroundColor = "#60b347";
-    document.querySelector(".number").style.width = "30rem";
     displayMessage(".number", correctNumber);
     if (level === 1 && score > highScore1) {
       highScore1 = score;

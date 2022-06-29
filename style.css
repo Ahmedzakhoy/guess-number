@@ -159,3 +159,14 @@ main {
     flex-direction: column;
   }
 }
+
+/*footer*/
+footer {
+  margin-top: 100px;
+  margin-bottom: 20px;
+}
+footer p {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 10px;
+}
