@@ -17,7 +17,7 @@ const easy = document.querySelector(".easy");
 const intermediate = document.querySelector(".intermediate");
 const hard = document.querySelector(".hard");
 const check = document.querySelector(".check");
-
+const guessInput = document.querySelector(".guess");
 //variables
 let allData;
 let level = 1;
@@ -96,7 +96,9 @@ hard.addEventListener("click", () => setLevelEventHandler(3, 500, hard));
 
 //main functionality
 check.addEventListener("click", function () {
-  let input = Number(document.querySelector(".guess").value);
+  let input = Number(guessInput.value);
+  guessInput.value = "";
+
   function highScoreUpdate(highScoreVar) {
     displayMessage(".highscore", highScoreVar);
     storeData();
