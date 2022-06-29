@@ -17,7 +17,7 @@ const easy = document.querySelector(".easy");
 const intermediate = document.querySelector(".intermediate");
 const hard = document.querySelector(".hard");
 const check = document.querySelector(".check");
-
+const guessInput = document.querySelector(".guess");
 //variables
 let allData;
 let level = 1;
@@ -59,7 +59,6 @@ function setLevelFunction(
   document.querySelector("body").style.backgroundColor = "";
   document.querySelector(".guess").value = "";
   displayMessage(".number", "?");
-  document.querySelector(".number").style.width = "";
   store ? storeData() : "";
 }
 
@@ -97,7 +96,9 @@ hard.addEventListener("click", () => setLevelEventHandler(3, 500, hard));
 
 //main functionality
 check.addEventListener("click", function () {
-  let input = Number(document.querySelector(".guess").value);
+  let input = Number(guessInput.value);
+  guessInput.value = "";
+
   function highScoreUpdate(highScoreVar) {
     displayMessage(".highscore", highScoreVar);
     storeData();
@@ -107,7 +108,6 @@ check.addEventListener("click", function () {
   } else if (input === correctNumber) {
     displayMessage(".message", "🎉 great job");
     document.querySelector("body").style.backgroundColor = "#60b347";
-    document.querySelector(".number").style.width = "30rem";
     displayMessage(".number", correctNumber);
     if (level === 1 && score > highScore1) {
       highScore1 = score;
