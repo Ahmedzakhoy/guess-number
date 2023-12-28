@@ -1,5 +1,5 @@
 "use strict";
-import { randomNumber, displayMessage, storeData } from "/helpers.js";
+import { randomNumber, displayMessage, storeData } from "helpers.js";
 
 //selections from HTML
 const allLevelsBtns = document.querySelectorAll(".top div");
