@@ -1,107 +1,93 @@
 "use strict";
+import { randomNumber, displayMessage, storeData } from "/helpers.js";
 
-//functions
-function randomNumber(range = 20) {
-  return Math.trunc(Math.random() * range) + 1;
-}
-function startingScore(number = 20) {
-  return number;
-}
-let displayMessage = function ($class, text) {
-  document.querySelector(`${$class}`).textContent = text;
-};
-
-//selections
-const allLevels = document.querySelectorAll(".top div");
-const easy = document.querySelector(".easy");
-const intermediate = document.querySelector(".intermediate");
-const hard = document.querySelector(".hard");
-const check = document.querySelector(".check");
+//selections from HTML
+const allLevelsBtns = document.querySelectorAll(".top div");
+const easyBtn = document.querySelector(".easy");
+const intermediateBtn = document.querySelector(".intermediate");
+const hardBtn = document.querySelector(".hard");
+const checkBtn = document.querySelector(".check");
 const guessInput = document.querySelector(".guess");
-//variables
+
+//variables to be used with their default value
 let allData;
 let level = 1;
-let correctNumber,
-  score,
-  starting = startingScore(20),
-  randomLimit = 20,
-  element;
+let correctNumber;
+let score = 0;
+let startingScore = 20;
+let randomNumberLimit = 20;
+let difficultyElement = easyBtn;
 let highScore1 = 0;
 let highScore2 = 0;
 let highScore3 = 0;
 
-//store data function
-function storeData() {
-  allData = {
-    randomLimit: randomLimit,
-    level: level,
-    highScore1: highScore1,
-    highScore2: highScore2,
-    highScore3: highScore3,
-  };
-  localStorage.setItem("data", JSON.stringify(allData));
-}
-
-//level functions
-function setLevelFunction(
+//reset functions
+function resetFunctionality(
   randomVar = 20,
   startingVar = 20,
   highScoreVar,
   store
 ) {
-  randomLimit = randomVar;
-  starting = startingVar;
-  correctNumber = randomNumber(randomLimit);
-  score = startingScore(starting);
+  randomNumberLimit = randomVar;
+  startingScore = startingVar;
+  correctNumber = randomNumber(randomNumberLimit);
+  score = startingScore;
   displayMessage(".score", score);
   displayMessage(".highscore", highScoreVar);
   displayMessage(".message", "Start guessing...");
   document.querySelector("body").style.backgroundColor = "";
   document.querySelector(".guess").value = "";
   displayMessage(".number", "?");
-  store ? storeData() : "";
+  store ? storeData(level, highScore1, highScore2, highScore3) : "";
 }
 
 //set level
 function setLevel(store) {
   if (level === 1) {
-    setLevelFunction(20, 20, highScore1, store);
+    resetFunctionality(20, 20, highScore1, store);
   } else if (level === 2) {
-    setLevelFunction(100, 10, highScore2, store);
+    resetFunctionality(100, 10, highScore2, store);
   } else if (level === 3) {
-    setLevelFunction(500, 7, highScore3, store);
+    resetFunctionality(500, 7, highScore3, store);
   }
 }
 
 //level change event handler
 const setLevelEventHandler = function (
   levelPara,
-  number,
-  element,
+  upperLimitNumber,
+  difficultyElement,
   store = true
 ) {
   level = levelPara;
   setLevel(store);
-  allLevels.forEach((el) => el.classList.remove("active"));
-  element.classList.add("active");
-  displayMessage(".between", `(Between 1 and ${number})`);
+  allLevelsBtns.forEach((el) => el.classList.remove("active"));
+  difficultyElement.classList.add("active");
+  displayMessage(".between", `(Between 1 and ${upperLimitNumber})`);
 };
 
-//level buttons event handlers
-easy.addEventListener("click", () => setLevelEventHandler(1, 20, easy));
-intermediate.addEventListener("click", () =>
-  setLevelEventHandler(2, 100, intermediate)
+//level buttons event listeners
+easyBtn.addEventListener("click", () => setLevelEventHandler(1, 20, easyBtn));
+intermediateBtn.addEventListener("click", () =>
+  setLevelEventHandler(2, 100, intermediateBtn)
 );
-hard.addEventListener("click", () => setLevelEventHandler(3, 500, hard));
+hardBtn.addEventListener("click", () => setLevelEventHandler(3, 500, hardBtn));
+
+//enter key event
+window.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    checkBtn.click();
+  }
+});
 
 //main functionality
-check.addEventListener("click", function () {
+checkBtn.addEventListener("click", function () {
   let input = Number(guessInput.value);
   guessInput.value = "";
 
   function highScoreUpdate(highScoreVar) {
     displayMessage(".highscore", highScoreVar);
-    storeData();
+    storeData(level, highScore1, highScore2, highScore3);
   }
   if (!input) {
     displayMessage(".message", "⛔ empty or zero is not accepted");
@@ -134,32 +120,6 @@ check.addEventListener("click", function () {
   }
 });
 
-//enter key event
-window.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    check.click();
-  }
-});
-
-//init function
-function init() {
-  allData = JSON.parse(localStorage.getItem("data"));
-  level = allData?.level ? allData.level : 1;
-  if (level === 1) {
-    element = easy;
-  } else if (level === 2) {
-    element = intermediate;
-  } else if (level === 3) {
-    element = hard;
-  }
-  randomLimit = allData?.randomLimit ? allData.randomLimit : 20;
-  highScore1 = allData?.highScore1 ? allData.highScore1 : 0;
-  highScore2 = allData?.highScore2 ? allData.highScore2 : 0;
-  highScore3 = allData?.highScore3 ? allData.highScore3 : 0;
-  setLevelEventHandler(level, randomLimit, element, false);
-}
-init();
-
 //again button
 document.querySelector(".again").addEventListener("click", function () {
   setLevel();
@@ -169,6 +129,26 @@ document.querySelector(".again").addEventListener("click", function () {
 document.querySelector(".reset").addEventListener("click", function () {
   localStorage.clear();
   highScore1 = highScore2 = highScore3 = 0;
-  setLevelEventHandler(1, 20, easy, false);
-  setLevelFunction(20, 20, 0, false);
+  setLevelEventHandler(1, 20, easyBtn, false);
+  resetFunctionality(20, 20, 0, false);
 });
+
+//init function
+function init() {
+  allData = JSON.parse(localStorage.getItem("data"));
+  level = allData?.level ? allData.level : 1;
+  if (level === 1) {
+    difficultyElement = easyBtn;
+  } else if (level === 2) {
+    difficultyElement = intermediateBtn;
+  } else if (level === 3) {
+    difficultyElement = hardBtn;
+  }
+  highScore1 = allData?.highScore1 ? allData.highScore1 : 0;
+  highScore2 = allData?.highScore2 ? allData.highScore2 : 0;
+  highScore3 = allData?.highScore3 ? allData.highScore3 : 0;
+  setLevelEventHandler(level, randomNumberLimit, difficultyElement, false);
+}
+
+//call init function
+init();
